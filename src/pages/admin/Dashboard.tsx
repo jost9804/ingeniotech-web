@@ -1,4 +1,4 @@
-import { useJobs } from '@/hooks/useJobs';
+import { useJobs } from '../../hooks/useJobs';
 import { Loader } from 'lucide-react';
 
 export function Dashboard() {

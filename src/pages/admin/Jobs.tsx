@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useJobs } from '@/hooks/useJobs';
-import { JobStatusBadge } from '@/components/admin/JobStatusBadge';
+import { useJobs } from '../../hooks/useJobs';
+import { JobStatusBadge } from '../../components/admin/JobStatusBadge';
 import { Loader, Plus } from 'lucide-react';
 
 export function Jobs() {

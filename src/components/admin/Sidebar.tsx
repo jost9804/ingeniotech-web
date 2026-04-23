@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 import { LogOut, LayoutDashboard, Wrench } from 'lucide-react';
-import { api } from '@/lib/api';
+import { api } from '../../lib/api';
 
 export function Sidebar() {
   const { user, logout } = useAuth();

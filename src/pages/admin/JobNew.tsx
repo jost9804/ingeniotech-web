@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCreateJob } from '@/hooks/useJobs';
+import { useCreateJob } from '../../hooks/useJobs';
 import { ArrowLeft, Loader } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

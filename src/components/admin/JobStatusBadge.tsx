@@ -1,4 +1,4 @@
-import { JobStatus } from '@/types';
+import type { JobStatus } from '../../types';
 
 const statusColors: Record<JobStatus, string> = {
   recibido: 'bg-blue-100 text-blue-800',

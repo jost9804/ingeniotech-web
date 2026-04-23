@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useJob, useUpdateJob, useDeleteJob } from '@/hooks/useJobs';
-import { JobStatusBadge } from '@/components/admin/JobStatusBadge';
+import { useJob, useUpdateJob, useDeleteJob } from '../../hooks/useJobs';
+import { JobStatusBadge } from '../../components/admin/JobStatusBadge';
 import { ArrowLeft, Loader, Trash2 } from 'lucide-react';
-import { JobProgressBar } from '@/components/admin/JobProgressBar';
+import { JobProgressBar } from '../../components/admin/JobProgressBar';
 
 export function JobDetail() {
   const { id } = useParams<{ id: string }>();

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/lib/api';
-import { Job, PaginatedResponse } from '@/types';
+import { api } from '../lib/api';
+import type { Job, PaginatedResponse } from '../types';
 
 export function useJobs(page = 1, filters?: { status?: string; assigned_to?: number }) {
   return useQuery({
