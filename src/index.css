@@ -17,4 +17,13 @@
     display: flex;
     flex-direction: column;
   }
+
+  select {
+    color: rgb(17, 24, 39);
+  }
+
+  select option {
+    color: rgb(17, 24, 39);
+    background-color: white;
+  }
 }
