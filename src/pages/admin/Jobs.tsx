@@ -29,7 +29,7 @@ export function Jobs() {
             setStatusFilter(e.target.value);
             setPage(1);
           }}
-          className="px-4 py-2 border border-gray-300 rounded-lg"
+          className="px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
         >
           <option value="">Todos los estados</option>
           <option value="recibido">Recibido</option>
