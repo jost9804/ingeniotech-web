@@ -60,7 +60,7 @@ export function JobNew() {
                 name="client_name"
                 value={formData.client_name}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                 required
               />
             </div>
@@ -72,7 +72,7 @@ export function JobNew() {
                 name="client_phone"
                 value={formData.client_phone}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                 required
               />
             </div>
@@ -85,7 +85,7 @@ export function JobNew() {
                 name="device_type"
                 value={formData.device_type}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
               >
                 <option value="computador">Computador</option>
                 <option value="celular">Celular</option>
@@ -100,7 +100,7 @@ export function JobNew() {
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
               >
                 <option value="recibido">Recibido</option>
                 <option value="en_diagnostico">En Diagnóstico</option>
@@ -117,7 +117,7 @@ export function JobNew() {
               name="problem_description"
               value={formData.problem_description}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 text-gray-900"
               required
             />
           </div>
