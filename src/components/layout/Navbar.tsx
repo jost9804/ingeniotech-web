@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { WHATSAPP_URL, BUSINESS } from '../../config'
+import CartButton from '../cart/CartButton'
 
 const navLinks = [
   { to: '/', label: 'Inicio' },
   { to: '/servicios', label: 'Servicios' },
+  { to: '/productos', label: 'Productos' },
   { to: '/contacto', label: 'Contacto' },
 ]
 
@@ -49,8 +51,9 @@ export default function Navbar() {
             ))}
           </nav>
 
-          {/* CTA + mobile toggle */}
-          <div className="flex items-center gap-3">
+          {/* CTA + cart + mobile toggle */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <CartButton />
             <a
               href={WHATSAPP_URL}
               target="_blank"

@@ -4,7 +4,10 @@ import Footer from './components/layout/Footer'
 import WhatsAppButton from './components/ui/WhatsAppButton'
 import Home from './pages/Home'
 import Services from './pages/Services'
+import Products from './pages/Products'
 import Contact from './pages/Contact'
+import { CartProvider } from './contexts/CartContext'
+import CartDrawer from './components/cart/CartDrawer'
 import { Login } from './pages/admin/Login'
 import { AdminLayout } from './pages/admin/AdminLayout'
 import { ProtectedRoute } from './components/admin/ProtectedRoute'
@@ -37,7 +40,7 @@ export default function App() {
         <Route
           path="*"
           element={
-            <>
+            <CartProvider>
               {/* Logo watermark — fixed, centered, behind everything */}
               <img
                 src="/logo.jpg"
@@ -64,13 +67,15 @@ export default function App() {
                   <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/servicios" element={<Services />} />
+                    <Route path="/productos" element={<Products />} />
                     <Route path="/contacto" element={<Contact />} />
                   </Routes>
                 </main>
                 <Footer />
                 <WhatsAppButton />
+                <CartDrawer />
               </div>
-            </>
+            </CartProvider>
           }
         />
       </Routes>
