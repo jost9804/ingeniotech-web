@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Laptop, Smartphone, Camera, Headphones, Package, Plus, Loader } from 'lucide-react'
+import { Laptop, Smartphone, Camera, Headphones, Package, Plus, Loader, Search, X } from 'lucide-react'
 import { formatPrice, CATEGORIES } from '../data/products'
 import type { Product, ProductCategory } from '../data/products'
 import { usePublicProducts } from '../hooks/useProducts'
@@ -71,11 +71,24 @@ function ProductCard({ product }: { product: Product }) {
   )
 }
 
+// Normaliza texto para buscar sin importar mayúsculas ni tildes.
+const normalize = (s: string) =>
+  s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
+
 export default function Products() {
   const [active, setActive] = useState<ProductCategory | 'Todos'>('Todos')
+  const [query, setQuery] = useState('')
   const { data: products, isLoading, isError } = usePublicProducts(active)
 
   const filters: (ProductCategory | 'Todos')[] = ['Todos', ...CATEGORIES]
+
+  const q = normalize(query.trim())
+  const visible = q
+    ? (products ?? []).filter(
+        (p) =>
+          normalize(p.name).includes(q) || normalize(p.description).includes(q),
+      )
+    : products ?? []
 
   return (
     <>
@@ -95,6 +108,33 @@ export default function Products() {
       {/* Catalog */}
       <section className="bg-surface-dark py-12">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          {/* Buscador */}
+          <div className="mx-auto mb-6 max-w-xl">
+            <div className="relative">
+              <Search
+                size={20}
+                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
+              />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Buscar productos..."
+                className="w-full rounded-xl border border-slate-700 bg-surface py-3 pl-12 pr-11 text-white placeholder:text-slate-500 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/40"
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery('')}
+                  aria-label="Limpiar búsqueda"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-800 hover:text-white"
+                >
+                  <X size={18} />
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* Filters */}
           <div className="mb-8 flex flex-wrap justify-center gap-2">
             {filters.map((f) => (
@@ -121,13 +161,15 @@ export default function Products() {
             <p className="py-16 text-center text-slate-500">
               No pudimos cargar los productos. Intenta de nuevo más tarde.
             </p>
-          ) : !products || products.length === 0 ? (
+          ) : visible.length === 0 ? (
             <p className="py-16 text-center text-slate-500">
-              No hay productos en esta categoría por ahora.
+              {query
+                ? `No encontramos productos para "${query}".`
+                : 'No hay productos en esta categoría por ahora.'}
             </p>
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {products.map((product) => (
+              {visible.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
