@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Wrench, Monitor, Camera, ShieldCheck, Zap, Star, HeadphonesIcon } from 'lucide-react'
+import { Wrench, Monitor, Camera, ShieldCheck, Zap, Star, HeadphonesIcon, ShoppingBag } from 'lucide-react'
 import { WHATSAPP_URL } from '../config'
 
 const services = [
@@ -68,11 +68,18 @@ export default function Home() {
               Reparamos lo que otros no pueden.
             </p>
             <div className="flex flex-wrap gap-4">
+              <Link
+                to="/productos"
+                className="inline-flex items-center gap-2 bg-brand hover:bg-brand-dark text-white font-semibold px-6 py-3.5 rounded-xl transition-colors text-sm sm:text-base"
+              >
+                <ShoppingBag size={18} />
+                Explora nuestros productos
+              </Link>
               <a
                 href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-brand hover:bg-brand-dark text-white font-semibold px-6 py-3.5 rounded-xl transition-colors text-sm sm:text-base"
+                className="inline-flex items-center gap-2 border border-slate-700 hover:border-brand text-slate-300 hover:text-brand font-semibold px-6 py-3.5 rounded-xl transition-colors text-sm sm:text-base"
               >
                 Contáctanos por WhatsApp
               </a>
