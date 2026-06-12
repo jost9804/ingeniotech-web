@@ -15,6 +15,8 @@ import { Dashboard } from './pages/admin/Dashboard'
 import { Jobs } from './pages/admin/Jobs'
 import { JobNew } from './pages/admin/JobNew'
 import { JobDetail } from './pages/admin/JobDetail'
+import { AdminProducts } from './pages/admin/AdminProducts'
+import { ProductForm } from './pages/admin/ProductForm'
 
 export default function App() {
   return (
@@ -34,6 +36,9 @@ export default function App() {
           <Route path="trabajos" element={<Jobs />} />
           <Route path="trabajos/nuevo" element={<JobNew />} />
           <Route path="trabajos/:id" element={<JobDetail />} />
+          <Route path="productos" element={<AdminProducts />} />
+          <Route path="productos/nuevo" element={<ProductForm />} />
+          <Route path="productos/:id" element={<ProductForm />} />
         </Route>
 
         {/* Public routes */}

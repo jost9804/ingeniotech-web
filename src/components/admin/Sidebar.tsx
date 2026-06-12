@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { LogOut, LayoutDashboard, Wrench } from 'lucide-react';
+import { LogOut, LayoutDashboard, Wrench, Package } from 'lucide-react';
 import { api } from '../../lib/api';
 
 export function Sidebar() {
@@ -37,6 +37,13 @@ export function Sidebar() {
         >
           <Wrench size={20} />
           Trabajos
+        </Link>
+        <Link
+          to="/admin/productos"
+          className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition"
+        >
+          <Package size={20} />
+          Productos
         </Link>
       </nav>
 

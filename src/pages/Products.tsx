@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { Laptop, Smartphone, Camera, Headphones, Package, Plus } from 'lucide-react'
-import { products, formatPrice, CATEGORIES } from '../data/products'
+import { Laptop, Smartphone, Camera, Headphones, Package, Plus, Loader } from 'lucide-react'
+import { formatPrice, CATEGORIES } from '../data/products'
 import type { Product, ProductCategory } from '../data/products'
+import { usePublicProducts } from '../hooks/useProducts'
 import { useCart } from '../hooks/useCart'
 
 const categoryIcon: Record<ProductCategory, typeof Package> = {
@@ -56,9 +57,7 @@ function ProductCard({ product }: { product: Product }) {
 
 export default function Products() {
   const [active, setActive] = useState<ProductCategory | 'Todos'>('Todos')
-
-  const filtered =
-    active === 'Todos' ? products : products.filter((p) => p.category === active)
+  const { data: products, isLoading, isError } = usePublicProducts(active)
 
   const filters: (ProductCategory | 'Todos')[] = ['Todos', ...CATEGORIES]
 
@@ -98,13 +97,21 @@ export default function Products() {
           </div>
 
           {/* Grid */}
-          {filtered.length === 0 ? (
+          {isLoading ? (
+            <div className="flex justify-center py-16">
+              <Loader size={32} className="animate-spin text-brand" />
+            </div>
+          ) : isError ? (
+            <p className="py-16 text-center text-slate-500">
+              No pudimos cargar los productos. Intenta de nuevo más tarde.
+            </p>
+          ) : !products || products.length === 0 ? (
             <p className="py-16 text-center text-slate-500">
               No hay productos en esta categoría por ahora.
             </p>
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((product) => (
+              {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>

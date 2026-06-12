@@ -11,8 +11,8 @@ interface CartContextType {
   open: () => void
   close: () => void
   add: (product: Product) => void
-  remove: (id: string) => void
-  setQty: (id: string, qty: number) => void
+  remove: (id: number) => void
+  setQty: (id: number, qty: number) => void
   clear: () => void
 }
 
@@ -49,11 +49,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const remove = useCallback(
-    (id: string) => setItems((prev) => prev.filter((i) => i.product.id !== id)),
+    (id: number) => setItems((prev) => prev.filter((i) => i.product.id !== id)),
     [],
   )
 
-  const setQty = useCallback((id: string, qty: number) => {
+  const setQty = useCallback((id: number, qty: number) => {
     setItems((prev) =>
       qty <= 0
         ? prev.filter((i) => i.product.id !== id)
