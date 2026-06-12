@@ -32,8 +32,8 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-xl p-6 sm:p-8 w-full max-w-md">
         <h1 className="text-3xl font-bold mb-6 text-gray-900">Ingeniotech Admin</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">

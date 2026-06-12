@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Loader, Plus, Sparkles, Trash2, Upload, X } from 'lucide-react';
+import { ArrowLeft, Camera, Loader, Plus, Sparkles, Trash2, Upload, X } from 'lucide-react';
 import {
   useProduct,
   useCreateProduct,
@@ -162,7 +162,7 @@ export function ProductForm() {
     'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900';
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       <Link
         to="/admin/productos"
         className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6"
@@ -171,11 +171,11 @@ export function ProductForm() {
         Volver
       </Link>
 
-      <h1 className="text-4xl font-bold mb-8 text-gray-900">
+      <h1 className="text-3xl sm:text-4xl font-bold mb-6 sm:mb-8 text-gray-900">
         {isEdit ? 'Editar producto' : 'Nuevo producto'}
       </h1>
 
-      <div className="bg-white rounded-lg shadow p-8 max-w-2xl">
+      <div className="bg-white rounded-lg shadow p-4 sm:p-8 max-w-2xl">
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -261,8 +261,8 @@ export function ProductForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-1">Foto</label>
-            <div className="flex items-center gap-4">
+            <label className="block text-sm font-medium text-gray-900 mb-1">Foto principal</label>
+            <div className="flex flex-wrap items-center gap-4">
               <div className="h-24 w-24 flex-shrink-0 rounded-lg border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center">
                 {preview ? (
                   <img src={preview} alt="Vista previa" className="h-full w-full object-cover" />
@@ -271,12 +271,30 @@ export function ProductForm() {
                 )}
               </div>
               <div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFile}
-                  className="block text-sm text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-blue-700 hover:file:bg-blue-100"
-                />
+                <div className="flex flex-wrap gap-2">
+                  {/* Tomar foto: en móvil abre la cámara directamente */}
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+                    <Camera size={18} />
+                    Tomar foto
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={handleFile}
+                      className="hidden"
+                    />
+                  </label>
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100">
+                    <Upload size={18} />
+                    Elegir archivo
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFile}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
                 <p className="mt-1 text-xs text-gray-600">JPG, PNG o WEBP. Max 4MB.</p>
               </div>
             </div>
@@ -304,21 +322,23 @@ export function ProductForm() {
             ) : (
               <div className="space-y-2">
                 {specs.map((spec, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={spec.label}
-                      onChange={(e) => updateSpec(i, 'label', e.target.value)}
-                      placeholder="Ej: Pantalla"
-                      className={`${inputClass} w-1/3`}
-                    />
-                    <input
-                      type="text"
-                      value={spec.value}
-                      onChange={(e) => updateSpec(i, 'value', e.target.value)}
-                      placeholder='Ej: 6.5" Super AMOLED 90Hz'
-                      className={`${inputClass} flex-1`}
-                    />
+                  <div key={i} className="flex items-start gap-2">
+                    <div className="flex flex-1 flex-col gap-2 sm:flex-row">
+                      <input
+                        type="text"
+                        value={spec.label}
+                        onChange={(e) => updateSpec(i, 'label', e.target.value)}
+                        placeholder="Ej: Pantalla"
+                        className={`${inputClass} sm:w-1/3`}
+                      />
+                      <input
+                        type="text"
+                        value={spec.value}
+                        onChange={(e) => updateSpec(i, 'value', e.target.value)}
+                        placeholder='Ej: 6.5" Super AMOLED 90Hz'
+                        className={`${inputClass} sm:flex-1`}
+                      />
+                    </div>
                     <button
                       type="button"
                       onClick={() => removeSpec(i)}
@@ -339,7 +359,7 @@ export function ProductForm() {
               Imágenes promocionales
             </label>
             {gallery.length > 0 && (
-              <div className="mb-3 grid grid-cols-4 gap-3">
+              <div className="mb-3 grid grid-cols-3 gap-3 sm:grid-cols-4">
                 {gallery.map((url) => (
                   <div
                     key={url}

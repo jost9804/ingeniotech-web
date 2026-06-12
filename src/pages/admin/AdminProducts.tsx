@@ -14,15 +14,16 @@ export function AdminProducts() {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold">Productos</h1>
+    <div className="p-4 sm:p-8">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-4xl font-bold text-gray-900">Productos</h1>
         <Link
           to="/admin/productos/nuevo"
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
         >
           <Plus size={20} />
-          Nuevo producto
+          <span className="hidden sm:inline">Nuevo producto</span>
+          <span className="sm:hidden">Nuevo</span>
         </Link>
       </div>
 
