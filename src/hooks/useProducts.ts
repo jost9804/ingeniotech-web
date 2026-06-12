@@ -66,6 +66,19 @@ export function useUpdateProduct() {
   });
 }
 
+/** Genera una descripción con IA a partir del nombre del producto. */
+export function useGenerateDescription() {
+  return useMutation({
+    mutationFn: async (name: string) => {
+      const { data } = await api.post<{ description: string }>(
+        '/products/generate-description',
+        { name },
+      );
+      return data.description;
+    },
+  });
+}
+
 export function useDeleteProduct() {
   const queryClient = useQueryClient();
   return useMutation({

@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Loader, Upload } from 'lucide-react';
+import { ArrowLeft, Loader, Sparkles, Upload } from 'lucide-react';
 import {
   useProduct,
   useCreateProduct,
   useUpdateProduct,
+  useGenerateDescription,
 } from '../../hooks/useProducts';
 import { CATEGORIES } from '../../data/products';
 
@@ -17,6 +18,8 @@ export function ProductForm() {
   const { data: existing, isLoading: isLoadingProduct } = useProduct(id ?? NaN);
   const { mutate: createProduct, isPending: isCreating } = useCreateProduct();
   const { mutate: updateProduct, isPending: isUpdating } = useUpdateProduct();
+  const { mutate: generateDescription, isPending: isGenerating } =
+    useGenerateDescription();
 
   const [error, setError] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -61,6 +64,19 @@ export function ProductForm() {
     const file = e.target.files?.[0] ?? null;
     setImageFile(file);
     setPreview(file ? URL.createObjectURL(file) : existing?.image ?? null);
+  };
+
+  const handleGenerate = () => {
+    setError('');
+    if (!form.name.trim()) {
+      setError('Escribe primero el nombre del producto para generar la descripción.');
+      return;
+    }
+    generateDescription(form.name.trim(), {
+      onSuccess: (description) => setForm((prev) => ({ ...prev, description })),
+      onError: () =>
+        setError('No se pudo generar la descripción con IA. Intenta de nuevo.'),
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -147,7 +163,22 @@ export function ProductForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-1">Descripcion</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium text-gray-900">Descripcion</label>
+              <button
+                type="button"
+                onClick={handleGenerate}
+                disabled={isGenerating}
+                className="flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 disabled:text-blue-300"
+              >
+                {isGenerating ? (
+                  <Loader size={16} className="animate-spin" />
+                ) : (
+                  <Sparkles size={16} />
+                )}
+                {isGenerating ? 'Generando...' : 'Generar con IA'}
+              </button>
+            </div>
             <textarea
               name="description"
               value={form.description}
@@ -155,6 +186,9 @@ export function ProductForm() {
               className={`${inputClass} h-28`}
               required
             />
+            <p className="mt-1 text-xs text-gray-600">
+              Escribe el nombre del producto y la IA buscará sus características para redactar la descripción.
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
