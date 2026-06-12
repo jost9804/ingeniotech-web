@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Loader, Sparkles, Upload } from 'lucide-react';
+import { ArrowLeft, Loader, Plus, Sparkles, Trash2, Upload, X } from 'lucide-react';
 import {
   useProduct,
   useCreateProduct,
@@ -8,6 +8,7 @@ import {
   useGenerateDescription,
 } from '../../hooks/useProducts';
 import { CATEGORIES } from '../../data/products';
+import type { ProductSpec } from '../../data/products';
 
 export function ProductForm() {
   const navigate = useNavigate();
@@ -24,6 +25,9 @@ export function ProductForm() {
   const [error, setError] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [specs, setSpecs] = useState<ProductSpec[]>([]);
+  const [gallery, setGallery] = useState<string[]>([]);
+  const [newImageUrl, setNewImageUrl] = useState('');
   const [form, setForm] = useState({
     name: '',
     description: '',
@@ -44,6 +48,8 @@ export function ProductForm() {
         featured: Boolean(existing.featured),
         is_active: existing.is_active ?? true,
       });
+      setSpecs(existing.specs ?? []);
+      setGallery(existing.gallery ?? []);
       setPreview(existing.image ?? null);
     }
   }, [existing]);
@@ -69,19 +75,44 @@ export function ProductForm() {
   const handleGenerate = () => {
     setError('');
     if (!form.name.trim()) {
-      setError('Escribe primero el nombre del producto para generar la descripción.');
+      setError('Escribe primero el nombre del producto para generar la información.');
       return;
     }
     generateDescription(form.name.trim(), {
-      onSuccess: (description) => setForm((prev) => ({ ...prev, description })),
+      onSuccess: (info) => {
+        setForm((prev) => ({ ...prev, description: info.description }));
+        if (info.specs?.length) setSpecs(info.specs);
+        // Agrega las imágenes nuevas que la IA encontró, sin duplicar.
+        if (info.images?.length) {
+          setGallery((prev) => Array.from(new Set([...prev, ...info.images])));
+        }
+      },
       onError: () =>
-        setError('No se pudo generar la descripción con IA. Intenta de nuevo.'),
+        setError('No se pudo generar la información con IA. Intenta de nuevo.'),
     });
   };
+
+  // ─── Specs ───
+  const addSpec = () => setSpecs((prev) => [...prev, { label: '', value: '' }]);
+  const updateSpec = (i: number, field: keyof ProductSpec, value: string) =>
+    setSpecs((prev) => prev.map((s, idx) => (idx === i ? { ...s, [field]: value } : s)));
+  const removeSpec = (i: number) =>
+    setSpecs((prev) => prev.filter((_, idx) => idx !== i));
+
+  // ─── Galería ───
+  const addImageUrl = () => {
+    const url = newImageUrl.trim();
+    if (url && !gallery.includes(url)) setGallery((prev) => [...prev, url]);
+    setNewImageUrl('');
+  };
+  const removeImage = (url: string) =>
+    setGallery((prev) => prev.filter((u) => u !== url));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    const cleanSpecs = specs.filter((s) => s.label.trim() && s.value.trim());
 
     const data = new FormData();
     data.append('name', form.name);
@@ -90,6 +121,8 @@ export function ProductForm() {
     data.append('category', form.category);
     data.append('featured', form.featured ? '1' : '0');
     data.append('is_active', form.is_active ? '1' : '0');
+    data.append('specs', JSON.stringify(cleanSpecs));
+    data.append('gallery', JSON.stringify(gallery));
     if (imageFile) data.append('image', imageFile);
 
     const onError = (err: any) => {
@@ -187,7 +220,8 @@ export function ProductForm() {
               required
             />
             <p className="mt-1 text-xs text-gray-600">
-              Escribe el nombre del producto y la IA buscará sus características para redactar la descripción.
+              Escribe el nombre y "Generar con IA" buscará en la web la descripción,
+              las características y posibles imágenes del producto.
             </p>
           </div>
 
@@ -246,6 +280,121 @@ export function ProductForm() {
                 <p className="mt-1 text-xs text-gray-600">JPG, PNG o WEBP. Max 4MB.</p>
               </div>
             </div>
+          </div>
+
+          {/* Características técnicas */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-900">
+                Características
+              </label>
+              <button
+                type="button"
+                onClick={addSpec}
+                className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
+              >
+                <Plus size={16} />
+                Añadir
+              </button>
+            </div>
+            {specs.length === 0 ? (
+              <p className="text-xs text-gray-500">
+                Sin características. Usa "Generar con IA" o añádelas manualmente.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {specs.map((spec, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={spec.label}
+                      onChange={(e) => updateSpec(i, 'label', e.target.value)}
+                      placeholder="Ej: Pantalla"
+                      className={`${inputClass} w-1/3`}
+                    />
+                    <input
+                      type="text"
+                      value={spec.value}
+                      onChange={(e) => updateSpec(i, 'value', e.target.value)}
+                      placeholder='Ej: 6.5" Super AMOLED 90Hz'
+                      className={`${inputClass} flex-1`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeSpec(i)}
+                      className="flex-shrink-0 p-2 text-gray-400 hover:text-red-600"
+                      aria-label="Eliminar característica"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Galería de imágenes promocionales */}
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              Imágenes promocionales
+            </label>
+            {gallery.length > 0 && (
+              <div className="mb-3 grid grid-cols-4 gap-3">
+                {gallery.map((url) => (
+                  <div
+                    key={url}
+                    className="relative aspect-square overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+                  >
+                    <img
+                      src={url}
+                      alt="Imagen del producto"
+                      className="h-full w-full object-cover"
+                      onError={(e) => {
+                        (e.currentTarget.parentElement as HTMLElement).classList.add(
+                          'ring-2',
+                          'ring-red-400',
+                        );
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(url)}
+                      className="absolute right-1 top-1 rounded-full bg-black/60 p-1 text-white hover:bg-black/80"
+                      aria-label="Quitar imagen"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <input
+                type="url"
+                value={newImageUrl}
+                onChange={(e) => setNewImageUrl(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addImageUrl();
+                  }
+                }}
+                placeholder="https://… (URL de una imagen)"
+                className={`${inputClass} flex-1`}
+              />
+              <button
+                type="button"
+                onClick={addImageUrl}
+                className="flex-shrink-0 rounded-lg bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100"
+              >
+                Añadir
+              </button>
+            </div>
+            <p className="mt-1 text-xs text-gray-600">
+              La IA puede sugerirlas, pero <strong>revisa</strong> cada una: las que tengan
+              borde rojo no cargaron, quítalas.
+            </p>
           </div>
 
           <div className="flex items-center gap-6">

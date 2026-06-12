@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../lib/api';
-import type { Product } from '../data/products';
+import type { Product, ProductSpec } from '../data/products';
 
 const multipart = { headers: { 'Content-Type': 'multipart/form-data' } };
 
@@ -30,9 +30,22 @@ export function useAdminProducts() {
   });
 }
 
+/** Producto para el panel admin (cualquier estado). */
 export function useProduct(id: number) {
   return useQuery({
-    queryKey: ['product', id],
+    queryKey: ['product', 'admin', id],
+    queryFn: async () => {
+      const { data } = await api.get<Product>(`/admin/products/${id}`);
+      return data;
+    },
+    enabled: Number.isFinite(id),
+  });
+}
+
+/** Producto para la tienda pública (solo activos). */
+export function usePublicProduct(id: number) {
+  return useQuery({
+    queryKey: ['product', 'public', id],
     queryFn: async () => {
       const { data } = await api.get<Product>(`/products/${id}`);
       return data;
@@ -66,15 +79,21 @@ export function useUpdateProduct() {
   });
 }
 
-/** Genera una descripción con IA a partir del nombre del producto. */
+export type GeneratedProductInfo = {
+  description: string;
+  specs: ProductSpec[];
+  images: string[];
+};
+
+/** Genera descripción + características + imágenes con IA a partir del nombre. */
 export function useGenerateDescription() {
   return useMutation({
     mutationFn: async (name: string) => {
-      const { data } = await api.post<{ description: string }>(
+      const { data } = await api.post<GeneratedProductInfo>(
         '/products/generate-description',
         { name },
       );
-      return data.description;
+      return data;
     },
   });
 }

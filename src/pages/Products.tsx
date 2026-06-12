@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Laptop, Smartphone, Camera, Headphones, Package, Plus, Loader } from 'lucide-react'
 import { formatPrice, CATEGORIES } from '../data/products'
 import type { Product, ProductCategory } from '../data/products'
@@ -19,7 +20,10 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl border border-slate-800 bg-surface transition-colors hover:border-brand/30">
       {/* Image / placeholder */}
-      <div className="relative flex h-44 items-center justify-center bg-surface-light">
+      <Link
+        to={`/productos/${product.id}`}
+        className="relative flex h-44 items-center justify-center bg-surface-light"
+      >
         {product.image ? (
           <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
         ) : (
@@ -30,25 +34,37 @@ function ProductCard({ product }: { product: Product }) {
             Destacado
           </span>
         )}
-      </div>
+      </Link>
 
       {/* Body */}
       <div className="flex flex-1 flex-col p-5">
         <span className="text-xs font-medium uppercase tracking-wide text-brand">
           {product.category}
         </span>
-        <h3 className="mt-1 font-bold leading-snug text-white">{product.name}</h3>
-        <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-400">{product.description}</p>
+        <Link to={`/productos/${product.id}`} className="mt-1">
+          <h3 className="font-bold leading-snug text-white hover:text-brand">{product.name}</h3>
+        </Link>
+        <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-slate-400">
+          {product.description}
+        </p>
 
         <div className="mt-4 flex items-center justify-between gap-3">
           <span className="text-lg font-bold text-white">{formatPrice(product.price)}</span>
-          <button
-            onClick={() => add(product)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-brand px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
-          >
-            <Plus size={16} />
-            Agregar
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              to={`/productos/${product.id}`}
+              className="rounded-lg border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-300 transition-colors hover:bg-slate-800"
+            >
+              Ver
+            </Link>
+            <button
+              onClick={() => add(product)}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-brand px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
+            >
+              <Plus size={16} />
+              Agregar
+            </button>
+          </div>
         </div>
       </div>
     </div>

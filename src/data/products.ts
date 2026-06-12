@@ -13,13 +13,20 @@ export const CATEGORIES: ProductCategory[] = [
   'Accesorios',
 ]
 
+export type ProductSpec = {
+  label: string
+  value: string
+}
+
 export type Product = {
   id: number
   name: string
   description: string
+  specs?: ProductSpec[] | null
   price: number // COP
   category: ProductCategory
   image?: string | null
+  gallery?: string[] | null
   featured?: boolean
   is_active?: boolean
 }

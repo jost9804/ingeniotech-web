@@ -5,6 +5,7 @@ import WhatsAppButton from './components/ui/WhatsAppButton'
 import Home from './pages/Home'
 import Services from './pages/Services'
 import Products from './pages/Products'
+import ProductDetail from './pages/ProductDetail'
 import Contact from './pages/Contact'
 import { CartProvider } from './contexts/CartContext'
 import CartDrawer from './components/cart/CartDrawer'
@@ -73,6 +74,7 @@ export default function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/servicios" element={<Services />} />
                     <Route path="/productos" element={<Products />} />
+                    <Route path="/productos/:id" element={<ProductDetail />} />
                     <Route path="/contacto" element={<Contact />} />
                   </Routes>
                 </main>
