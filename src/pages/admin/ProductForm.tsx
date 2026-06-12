@@ -9,6 +9,7 @@ import {
 } from '../../hooks/useProducts';
 import { CATEGORIES } from '../../data/products';
 import type { ProductSpec } from '../../data/products';
+import { compressImage } from '../../lib/compressImage';
 
 export function ProductForm() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ export function ProductForm() {
   const [error, setError] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [compressing, setCompressing] = useState(false);
   const [specs, setSpecs] = useState<ProductSpec[]>([]);
   const [gallery, setGallery] = useState<string[]>([]);
   const [newImageUrl, setNewImageUrl] = useState('');
@@ -66,10 +68,27 @@ export function ProductForm() {
     }
   };
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
-    setImageFile(file);
-    setPreview(file ? URL.createObjectURL(file) : existing?.image ?? null);
+    if (!file) {
+      setImageFile(null);
+      setPreview(existing?.image ?? null);
+      return;
+    }
+    setError('');
+    setCompressing(true);
+    try {
+      // Comprime fotos grandes (del celular) a ~1MB antes de subir.
+      const optimized = await compressImage(file, { maxSizeMB: 1 });
+      setImageFile(optimized);
+      setPreview(URL.createObjectURL(optimized));
+    } catch {
+      // Si la compresión falla, intentamos subir el original tal cual.
+      setImageFile(file);
+      setPreview(URL.createObjectURL(file));
+    } finally {
+      setCompressing(false);
+    }
   };
 
   const handleGenerate = () => {
@@ -264,7 +283,9 @@ export function ProductForm() {
             <label className="block text-sm font-medium text-gray-900 mb-1">Foto principal</label>
             <div className="flex flex-wrap items-center gap-4">
               <div className="h-24 w-24 flex-shrink-0 rounded-lg border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center">
-                {preview ? (
+                {compressing ? (
+                  <Loader size={22} className="animate-spin text-gray-400" />
+                ) : preview ? (
                   <img src={preview} alt="Vista previa" className="h-full w-full object-cover" />
                 ) : (
                   <Upload size={22} className="text-gray-400" />
@@ -295,7 +316,11 @@ export function ProductForm() {
                     />
                   </label>
                 </div>
-                <p className="mt-1 text-xs text-gray-600">JPG, PNG o WEBP. Max 4MB.</p>
+                <p className="mt-1 text-xs text-gray-600">
+                  {compressing
+                    ? 'Optimizando imagen…'
+                    : 'Se optimiza automáticamente para subir rápido.'}
+                </p>
               </div>
             </div>
           </div>
@@ -442,11 +467,17 @@ export function ProductForm() {
 
           <button
             type="submit"
-            disabled={isPending}
+            disabled={isPending || compressing}
             className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-2 rounded-lg transition flex items-center justify-center gap-2"
           >
             {isPending && <Loader size={20} className="animate-spin" />}
-            {isPending ? 'Guardando...' : isEdit ? 'Guardar cambios' : 'Crear producto'}
+            {isPending
+              ? 'Guardando...'
+              : compressing
+                ? 'Optimizando imagen...'
+                : isEdit
+                  ? 'Guardar cambios'
+                  : 'Crear producto'}
           </button>
         </form>
       </div>
